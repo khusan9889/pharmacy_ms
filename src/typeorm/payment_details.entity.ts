@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 import { Purchase } from './purchases.entity';
 
 @Entity()
@@ -9,6 +9,8 @@ export class PaymentDetails {
   @Column()
   payment_method: string;
 
-  @ManyToOne(() => Purchase, purchase => purchase.payment_details)
+  @OneToOne(() => Purchase, purchase => purchase.paymentDetails)
+  @JoinColumn()
   purchase: Purchase;
+
 }
