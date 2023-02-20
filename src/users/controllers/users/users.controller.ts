@@ -1,28 +1,4 @@
-// import { Controller, Get, Param } from '@nestjs/common';
-// import { UserService } from 'src/users/services/users/users.service';
-// import { User } from 'src/typeorm';
-
-
-// // @Controller('users')
-// // export class UserController {
-// //   constructor(private readonly userService: UserService) {}
-
-// //   @Get()
-// //   async findAll(): Promise<User[]> {
-// //     return this.userService.findAll();
-// //   }
-
-
-
-// //   @Get(':id')
-// //   async findOne(@Param('id') id: string): Promise<User> {
-// //     return this.userService.findOne(Number(id));
-// //   }
-// // }
-
 import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
-// import { UserService } from './user.service';
-// import { User } from './user.entity';
 import { UserService } from 'src/users/services/users/users.service';
 import { User } from 'src/typeorm';
 
