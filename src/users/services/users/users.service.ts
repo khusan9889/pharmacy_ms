@@ -19,23 +19,18 @@ export class UserService {
     return this.userRepository.findOne(options);
   }
 
-  // async create(user: User): Promise<User> {
-  //   return this.userRepository.save(user);
-  // }
-
   async create(user: User): Promise<User> {
-    const existingUser = await this.userRepository.findOne({ where: { email: user.email } });
-    if (existingUser) {
+    const existingUserByEmail = await this.userRepository.findOne({ where: { email: user.email } });
+    if (existingUserByEmail) {
       throw new BadRequestException('This email is already in use. Please try with another email');
-      // return existingUser;
     }
 
-    // try {
+    const existingUserByUsername = await this.userRepository.findOne({ where: { username: user.username } });
+    if (existingUserByUsername) {
+      throw new BadRequestException('Username already exists');
+    }
     await this.userRepository.save(user);
     return user;
-    // } catch (error) {
-    //   throw new InternalServerErrorException('Failed to create user');
-    // }
   }
 
   async update(id: number, user: User): Promise<User> {
