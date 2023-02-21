@@ -11,15 +11,6 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import entities from './typeorm';
-// import { UserController } from './users/controllers/users/users.controller';
-
-// import { useContainer } from 'class-validator';
-// import { ValidationPipe } from '@nestjs/common';
-// import { NestFactory } from '@nestjs/core';
-
-
-
-
 
 
 @Module({

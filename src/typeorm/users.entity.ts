@@ -7,7 +7,6 @@ import { Matches, IsEmail, IsString, MinLength } from 'class-validator';
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z]*$/;
 const PASSWORD_REGEX = /^[^\s]+$/;
 
-
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

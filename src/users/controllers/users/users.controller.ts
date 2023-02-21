@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from 'src/users/services/users/users.service';
 import { User } from 'src/typeorm';
-// import { IsString, Matches } from 'class-validator';
 
 
 @Controller('users')
