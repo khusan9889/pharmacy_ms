@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, UpdateDateColumn, BeforeInsert } from 'typeorm';
 import { Vendor } from './vendors.entity';
 import { Role } from './roles.entity';
 import { Matches, IsEmail, IsString, MinLength } from 'class-validator';

@@ -2,6 +2,8 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOneOptions } from 'typeorm';
 import { User } from 'src/typeorm';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
@@ -33,7 +35,7 @@ export class UserService {
     if (!user.username || !user.email || !user.first_name || !user.last_name || !user.phone_number || !user.password) {
       throw new BadRequestException('All fields are required');
     }
-
+    user.password = await bcrypt.hash(user.password, 10);
     await this.userRepository.save(user);
     return user;
   }
