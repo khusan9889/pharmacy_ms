@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from 'src/users/services/users/users.service';
 import { User } from 'src/typeorm';
+// import { IsString, Matches } from 'class-validator';
+
 
 @Controller('users')
 export class UserController {
@@ -17,6 +19,7 @@ export class UserController {
   }
 
   @Post()
+  @UsePipes(new ValidationPipe())
   async create(@Body() user: User): Promise<User> {
     return this.userService.create(user);
   }
