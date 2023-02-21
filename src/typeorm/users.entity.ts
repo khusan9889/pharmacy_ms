@@ -21,27 +21,27 @@ export class User {
   @ManyToOne(() => Role, role => role.users)
   role: Role;
 
-  @Column()
+  @Column({ unique: true })
   @IsString()
   @MinLength(3)
   @Matches(USERNAME_REGEX, { message: 'Username should start with an English letter and contain only English letters. Spaces are not allowed' })
   username: string;
 
-  @Column()
+  @Column({ nullable: false })
   @IsString()
   @Matches(PASSWORD_REGEX, { message: 'Password cannot contain spaces' })
   password: string;
 
-  @Column()
+  @Column({ nullable: false })
   first_name: string;
 
-  @Column()
+  @Column({ nullable: false })
   last_name: string;
 
-  @Column()
+  @Column( { nullable:true } )
   patronomyc: string;
 
-  @Column()
+  @Column({ nullable: false })
   phone_number: string;
 
   @Column({ unique: true })

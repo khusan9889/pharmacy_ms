@@ -29,6 +29,11 @@ export class UserService {
     if (existingUserByUsername) {
       throw new BadRequestException('Username already exists');
     }
+
+    if (!user.username || !user.email || !user.first_name || !user.last_name || !user.phone_number || !user.password) {
+      throw new BadRequestException('All fields are required');
+    }
+
     await this.userRepository.save(user);
     return user;
   }
