@@ -4,11 +4,14 @@ import { Role } from './roles.entity';
 import { Matches, IsEmail, IsString, MinLength } from 'class-validator';
 
 
-const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z]*$/;
+const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+=[\]{};':"\\|,.<>/?]*$/;
 const PASSWORD_REGEX = /^[^\s]+$/;
 
 @Entity()
 export class User {
+  save() {
+    throw new Error('Method not implemented.');
+  }
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -41,7 +44,7 @@ export class User {
   @Column()
   phone_number: string;
 
-  @Column()
+  @Column({ unique: true })
   @IsEmail()
   email: string;
 
