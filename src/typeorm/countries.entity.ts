@@ -10,7 +10,7 @@ export class Country {
   @Column()
   name: string;
 
-  @Column({ type: 'integer' })
+  @Column({ nullable: true })
   country_code: number;
 
   @OneToMany(() => Product, product => product.vendor)
