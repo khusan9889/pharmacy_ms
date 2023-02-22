@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { CategoriesService } from 'src/categories/services/categories/categories.service';
 import { Category } from 'src/typeorm';
 
@@ -21,4 +21,16 @@ export class CategoriesController {
     async create(@Body() category: Category): Promise<Category> {
         return this.categoryService.create(category);
     }
+
+    @Put(':id')
+    async update(@Param('id') id: number, @Body() category:Category): Promise<Category> {
+        return this.categoryService.update(id, category)
+    }
+
+    @Delete(':id')
+    async delete(@Param('id') id: number): Promise<void> {
+        return this.categoryService.delete(id);
+    }
+
+
 }
