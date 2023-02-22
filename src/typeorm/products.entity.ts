@@ -13,7 +13,7 @@ export class Product {
   @ManyToOne(() => Vendor, vendor => vendor.products)
   vendor: Vendor;
 
-  @Column()
+  @Column({ nullable: false })
   name: string;
 
   @Column('text')
