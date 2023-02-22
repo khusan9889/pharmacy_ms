@@ -32,5 +32,4 @@ export class CategoriesController {
         return this.categoryService.delete(id);
     }
 
-
 }

@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Vendor } from './vendors.entity';
 import { Category } from './categories.entity';
 import { Country } from './countries.entity';
+import { ProductPurchase } from './products_purchase.entity';
 
 
 @Entity()
@@ -19,7 +20,7 @@ export class Product {
   short_description: string;
 
   @Column()
-  barcode: string;
+  barcode: number;
 
   @ManyToOne(() => Category, category => category.products)
   category: Category;
@@ -47,7 +48,13 @@ export class Product {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   trade_price: number;
-    productPurchase: any;
+
+    
+// productPurchase: any;
+  
+
+  @OneToMany(() => ProductPurchase, productPurchase => productPurchase.product)
+  productPurchases: ProductPurchase[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created: Date;

@@ -8,7 +8,7 @@ export class ProductPurchase {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Product, (product) => product.productPurchase)
+  @ManyToOne(() => Product, product => product.productPurchases)
   product: Product;
 
   @ManyToOne(() => Purchase, (purchase) => purchase.productPurchase)
