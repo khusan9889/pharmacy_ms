@@ -10,6 +10,7 @@ import { PaymentDetailsModule } from './payment_details/payment_details.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import entities from './typeorm';
 
 
@@ -39,7 +40,8 @@ import entities from './typeorm';
     ProductsPurchaseModule,
     PaymentDetailsModule,
     UsersModule,
-    RolesModule,],
+    RolesModule,
+    AuthModule,],
   controllers: [],
   providers: [],
 })

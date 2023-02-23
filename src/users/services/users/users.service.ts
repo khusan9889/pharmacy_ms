@@ -53,20 +53,5 @@ export class UserService {
   async findByUsername(username: string): Promise<User> {
     return this.userRepository.findOne({ where: { username } });
   }
-
-  // User authentification
-  // async authenticateUser(username: string, password: string): Promise<User> {
-  //   const user = await this.userRepository.findOne({ where: { username } });
-  //   if (!user) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-  
-  //   const isMatch = await bcrypt.compare(password, user.password);
-  //   if (!isMatch) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-  
-  //   return user;
-  // }
   
 }
