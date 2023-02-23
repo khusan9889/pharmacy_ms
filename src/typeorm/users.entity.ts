@@ -1,8 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, UpdateDateColumn, BeforeInsert } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, UpdateDateColumn, BeforeInsert, OneToMany } from 'typeorm';
 import { Vendor } from './vendors.entity';
 import { Role } from './roles.entity';
 import { Matches, IsEmail, IsString, MinLength } from 'class-validator';
-
+import { Purchase } from './purchases.entity';
 
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+=[\]{};':"\\|,.<>/?]*$/;
 const PASSWORD_REGEX = /^[^\s]+$/;
@@ -20,6 +20,9 @@ export class User {
 
   @ManyToOne(() => Role, role => role.users)
   role: Role;
+
+  @OneToMany(() => Purchase, purchase => purchase.user)
+  purchases: Purchase[];
 
   @Column({ unique: true })
   @IsString()

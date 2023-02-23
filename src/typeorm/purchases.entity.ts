@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, OneToOne 
 import { Vendor } from './vendors.entity';
 import { ProductPurchase } from './products_purchase.entity';
 import { PaymentDetails } from './payment_details.entity';
+import { User } from './users.entity';
 
 @Entity()
 export class Purchase {
@@ -13,6 +14,9 @@ export class Purchase {
 
   @Column()
   total_price: number;
+
+  @ManyToOne(() => User, user => user.purchases)
+  user: User;
 
   @OneToMany(() => ProductPurchase, (productPurchase) => productPurchase.purchase)
   productPurchase: ProductPurchase[];
