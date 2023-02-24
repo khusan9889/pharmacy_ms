@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
+import { CreateProductDto } from 'dto/create_product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -19,10 +20,42 @@ export class ProductsService {
         return this.productRepository.findOne(options);
     }
 
-    async create(product: Product): Promise<Product> {
-        await this.productRepository.save(product);
-        return product;
+    async addProduct(addProductDto: CreateProductDto): Promise<Product> {
+
+        let product = await this.productRepository.findOne({ where: { barcode: addProductDto.barcode, expired_date: addProductDto.expired_date } });
+        if (product) {
+            product.amount += addProductDto.amount;
+            product.updated = new Date();
+            const result = await this.productRepository.update(product.id, product)
+            return result[0];
+        } else {
+            const { name,
+                short_description,
+                barcode,
+                manufactured_date,
+                expired_date,
+                received_date,
+                amount,
+                manufacturer,
+                price,
+                trade_price } = addProductDto
+            const result = await this.productRepository.save({
+                name,
+                short_description,
+                barcode,
+                manufactured_date,
+                expired_date,
+                received_date,
+                amount,
+                manufacturer,
+                price,
+                trade_price
+            })
+            return result[0]
+        }
     }
+
+
 
     async update(id: number, product: Product): Promise<Product> {
         const options: FindOneOptions<Product> = { where: { id } }

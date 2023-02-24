@@ -20,7 +20,7 @@ export class Product {
   short_description: string;
 
   @Column()
-  barcode: number;
+  barcode: string;
 
   @ManyToOne(() => Category, category => category.products)
   category: Category;
@@ -47,11 +47,7 @@ export class Product {
   price: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  trade_price: number;
-
-    
-// productPurchase: any;
-  
+  trade_price: number;  
 
   @OneToMany(() => ProductPurchase, productPurchase => productPurchase.product)
   productPurchases: ProductPurchase[];
