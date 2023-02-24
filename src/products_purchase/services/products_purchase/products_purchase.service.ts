@@ -22,5 +22,3 @@ export class ProductsPurchaseService {
     return product_purchase;
   }
 }
-
-

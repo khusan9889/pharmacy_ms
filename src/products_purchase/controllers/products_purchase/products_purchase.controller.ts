@@ -13,5 +13,4 @@ export class ProductsPurchaseController {
         return this.productPurchaseService.create(productPurchase)
     }
 
-
 }
