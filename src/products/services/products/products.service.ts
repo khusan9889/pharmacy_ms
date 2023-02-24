@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
+import { ProductPurchase } from 'src/typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -55,8 +56,6 @@ export class ProductsService {
         }
     }
 
-
-
     async update(id: number, product: Product): Promise<Product> {
         const options: FindOneOptions<Product> = { where: { id } }
         await this.productRepository.update(id, product);
@@ -65,6 +64,21 @@ export class ProductsService {
 
     async delete(id: number): Promise<void> {
         await this.productRepository.delete(id);
+    }
+
+
+
+    async purchaseProduct(productId: number, purchaseAmount: number): Promise<void> {
+        const product = await this.productRepository.findOne({ where: { id: productId } });
+        if (!product) {
+          throw new NotFoundException(`Product with ID ${productId} not found`);
+        }
+        if (product.amount < purchaseAmount) {
+          throw new BadRequestException(`Not enough quantity for product with ID ${productId}`);
+        }
+      
+        product.amount -= purchaseAmount;
+        await this.productRepository.save(product);
     }
 
 }

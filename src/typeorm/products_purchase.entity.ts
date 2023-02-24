@@ -20,3 +20,4 @@ export class ProductPurchase {
   @Column()
   price: number;
 }
+
