@@ -47,7 +47,7 @@ export class Product {
   price: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  trade_price: number;  
+  trade_price: number;
 
   @OneToMany(() => ProductPurchase, productPurchase => productPurchase.product)
   productPurchases: ProductPurchase[];
