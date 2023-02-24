@@ -66,8 +66,6 @@ export class ProductsService {
         await this.productRepository.delete(id);
     }
 
-
-
     async purchaseProduct(productId: number, purchaseAmount: number): Promise<void> {
         const product = await this.productRepository.findOne({ where: { id: productId } });
         if (!product) {
@@ -76,7 +74,6 @@ export class ProductsService {
         if (product.amount < purchaseAmount) {
           throw new BadRequestException(`Not enough quantity for product with ID ${productId}`);
         }
-      
         product.amount -= purchaseAmount;
         await this.productRepository.save(product);
     }
