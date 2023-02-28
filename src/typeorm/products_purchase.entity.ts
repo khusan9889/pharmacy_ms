@@ -20,5 +20,3 @@ export class ProductPurchase {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 }
-
-

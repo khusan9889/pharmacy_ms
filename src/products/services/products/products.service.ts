@@ -76,7 +76,7 @@ export class ProductsService {
             throw new BadRequestException(`Not enough quantity for product with ID ${productId}`);
         }
         product.amount -= purchaseAmount;
-
+        
         await this.productRepository.save(product);
     }
 

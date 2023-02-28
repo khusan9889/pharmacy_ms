@@ -1,5 +1,5 @@
 //products_purchase.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsService } from 'src/products/services/products/products.service';
 import { ProductPurchase } from 'src/typeorm';
@@ -15,8 +15,14 @@ export class ProductsPurchaseService {
   ) { }
 
   async create(product_purchase: any): Promise<ProductPurchase> {
+    const product = await this.productsService.findOne(product_purchase.product);
     await this.productsService.purchaseProduct(product_purchase?.product, product_purchase.amount);
-    await this.productPurchaseRepository.save(product_purchase);
-    return product_purchase;
+    const price = product.price;
+    const productPurchase = {
+      ...product_purchase,
+      price,
+    };
+    await this.productPurchaseRepository.save(productPurchase);
+    return productPurchase;
   }
 }
