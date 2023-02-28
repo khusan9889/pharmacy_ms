@@ -1,3 +1,4 @@
+//products_purchase.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsService } from 'src/products/services/products/products.service';
@@ -11,13 +12,10 @@ export class ProductsPurchaseService {
     @InjectRepository(ProductPurchase)
     private readonly productPurchaseRepository: Repository<ProductPurchase>,
     private readonly productsService: ProductsService,
-  ) {}
+  ) { }
 
-  async create(product_purchase: ProductPurchase): Promise<ProductPurchase> {
-    const { product, ...rest } = product_purchase;
-    const productId = product.id; // Extract the id of the product object
-    await this.productsService.purchaseProduct(productId, rest.amount);
-
+  async create(product_purchase: any): Promise<ProductPurchase> {
+    await this.productsService.purchaseProduct(product_purchase?.product, product_purchase.amount);
     await this.productPurchaseRepository.save(product_purchase);
     return product_purchase;
   }
