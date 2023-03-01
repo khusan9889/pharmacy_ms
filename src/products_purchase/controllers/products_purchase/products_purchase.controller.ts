@@ -9,8 +9,8 @@ export class ProductsPurchaseController {
     ) { }
 
     @Post()
-    async create(@Body() productPurchase: ProductPurchase): Promise<ProductPurchase> {
-        return this.productPurchaseService.create(productPurchase)
+    async create(@Body() productPurchases: ProductPurchase[]): Promise<ProductPurchase[]> {
+        return this.productPurchaseService.create(productPurchases);
     }
 
 }

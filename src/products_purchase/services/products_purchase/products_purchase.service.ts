@@ -14,15 +14,21 @@ export class ProductsPurchaseService {
     private readonly productsService: ProductsService,
   ) { }
 
-  async create(product_purchase: any): Promise<ProductPurchase> {
-    const product = await this.productsService.findOne(product_purchase.product);
-    await this.productsService.purchaseProduct(product_purchase?.product, product_purchase.amount);
-    const price = product.price;
-    const productPurchase = {
-      ...product_purchase,
-      price,
-    };
-    await this.productPurchaseRepository.save(productPurchase);
-    return productPurchase;
+  async create(product_purchases: any[]): Promise<ProductPurchase[]> {
+    const productPurchaseRecords = [];
+  
+    for (const product_purchase of product_purchases) {
+      const product = await this.productsService.findOne(product_purchase.product);
+      await this.productsService.purchaseProduct(product_purchase?.product, product_purchase.amount);
+      const price = product.price;
+      const productPurchase = {
+        ...product_purchase,
+        price,
+      };
+      productPurchaseRecords.push(productPurchase);
+    }
+  
+    await this.productPurchaseRepository.save(productPurchaseRecords);
+    return productPurchaseRecords;
   }
 }
