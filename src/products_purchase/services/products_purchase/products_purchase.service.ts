@@ -1,10 +1,10 @@
 //products_purchase.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsService } from 'src/products/services/products/products.service';
 import { ProductPurchase, Purchase } from 'src/typeorm';
 import { Repository } from 'typeorm';
-
+import { JwtAuthGuard } from './JwtAuthGuard';
 
 @Injectable()
 export class ProductsPurchaseService {
@@ -16,6 +16,7 @@ export class ProductsPurchaseService {
     private readonly productsService: ProductsService,
   ) { }
 
+  @UseGuards(JwtAuthGuard)
   async create(product_purchases: any[]): Promise<ProductPurchase[]> {
     const productPurchaseRecords = [];
     let total_price = 0;
