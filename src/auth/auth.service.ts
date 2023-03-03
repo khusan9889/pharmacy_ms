@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  private tokenBlacklist: string[] = [];
+  private tokenBlacklist: { [token: string]: string } = {};
 
   constructor(
     @InjectRepository(User)
@@ -32,8 +32,15 @@ export class AuthService {
     return { access_token: token, user: hasUser };
   }
 
-  logout(token: string) {
-    this.tokenBlacklist.push(token);
+  async logout(user: User, token: string) {
+    if (!this.tokenBlacklist[token]) {
+      const payload = this.jwtService.decode(token) as { username: string };
+      if (payload && payload.username === user.username) {
+        this.tokenBlacklist[token] = user.username;
+      } else {
+        throw new UnauthorizedException('Invalid token');
+      }
+    }
   }
 }
 
