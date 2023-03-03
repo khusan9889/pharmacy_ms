@@ -9,11 +9,14 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private tokenBlacklist: string[] = [];
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService
   ) { }
+
   async login({ username, password }: AuthLoginDto) {
     const hasUser = await this.userRepository.findOne({ where: { username } })
     if (!hasUser)
@@ -29,4 +32,8 @@ export class AuthService {
     return { access_token: token, user: hasUser };
   }
 
+  logout(token: string) {
+    this.tokenBlacklist.push(token);
+  }
 }
+

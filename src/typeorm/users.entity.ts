@@ -1,3 +1,4 @@
+//users.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, UpdateDateColumn, BeforeInsert, OneToMany } from 'typeorm';
 import { Vendor } from './vendors.entity';
 import { Role } from './roles.entity';
@@ -61,3 +62,4 @@ export class User {
   deleted: boolean;
 
 }
+

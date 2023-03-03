@@ -1,3 +1,4 @@
+//users.service.ts
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOneOptions } from 'typeorm';
@@ -55,3 +56,4 @@ export class UserService {
   }
   
 }
+
