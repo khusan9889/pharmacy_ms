@@ -12,7 +12,7 @@ export class Purchase {
   @ManyToOne(() => Vendor, (vendor) => vendor.purchases)
   vendor: Vendor;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   total_price: number;
 
   @ManyToOne(() => User, user => user.purchases)
@@ -23,7 +23,6 @@ export class Purchase {
 
   @OneToOne(() => PaymentDetails, paymentDetails => paymentDetails.purchase)
   paymentDetails: PaymentDetails;
-
   
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created: Date;
@@ -35,3 +34,4 @@ export class Purchase {
   deleted: boolean;
   
 }
+

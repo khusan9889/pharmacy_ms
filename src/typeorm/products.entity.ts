@@ -61,4 +61,3 @@ export class Product {
   @Column({ type: 'boolean', default: false })
   deleted: boolean;
 }
-

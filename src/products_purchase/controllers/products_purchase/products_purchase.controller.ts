@@ -4,13 +4,10 @@ import { ProductsPurchaseService } from 'src/products_purchase/services/products
 
 @Controller('purchase')
 export class ProductsPurchaseController {
-    constructor(
-        private readonly productPurchaseService: ProductsPurchaseService
-    ) { }
+    constructor(private readonly productsPurchaseService: ProductsPurchaseService) { }
 
     @Post()
     async create(@Body() productPurchases: ProductPurchase[]): Promise<ProductPurchase[]> {
-        return this.productPurchaseService.create(productPurchases);
+        return this.productsPurchaseService.create(productPurchases);
     }
-
 }

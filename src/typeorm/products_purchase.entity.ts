@@ -15,8 +15,9 @@ export class ProductPurchase {
   purchase: Purchase;
 
   @Column()
-  amount: number; //number
+  amount: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 }
+
