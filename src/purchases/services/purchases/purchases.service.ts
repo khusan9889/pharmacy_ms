@@ -21,6 +21,10 @@ export class PurchasesService {
       query = query.andWhere('purchase.created <= :dateTo', { dateTo });
     }
     
+    query = query.leftJoinAndSelect('purchase.productPurchase', 'productPurchase')
+      .leftJoinAndSelect('productPurchase.product', 'product')
+      .select(['purchase', 'product.id', 'product.name', 'product.barcode', 'productPurchase.amount']);
+    
     return query.getMany();
   }
 }
