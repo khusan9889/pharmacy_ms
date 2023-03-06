@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Purchase } from 'src/typeorm';
+import { ProductPurchase, Purchase } from 'src/typeorm';
 
 @Injectable()
 export class PurchasesService {
@@ -23,7 +23,7 @@ export class PurchasesService {
     
     query = query.leftJoinAndSelect('purchase.productPurchase', 'productPurchase')
       .leftJoinAndSelect('productPurchase.product', 'product')
-      .select(['purchase', 'product.id', 'product.name', 'product.barcode', 'productPurchase.amount']);
+      .select(['purchase', 'product.id', 'product.name', 'product.barcode', 'product.price' ,'productPurchase.amount']);
     
     return query.getMany();
   }
