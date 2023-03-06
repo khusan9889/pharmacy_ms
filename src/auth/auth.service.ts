@@ -32,15 +32,36 @@ export class AuthService {
     return { access_token: token, user: hasUser };
   }
 
+
   async logout(user: User, token: string) {
-    if (!this.tokenBlacklist[token]) {
-      const payload = this.jwtService.decode(token) as { username: string };
-      if (payload && payload.username === user.username) {
-        this.tokenBlacklist[token] = user.username;
-      } else {
-        throw new UnauthorizedException('Invalid token');
+    console.log('user', user);
+    if (!token.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    const splitToken = token.split('Bearer ')[1];
+    if (!splitToken) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    try {
+      const payload = await this.jwtService.decode(splitToken) as { username?: string };
+
+
+      if (!payload || !payload.username) {
+        throw new Error('Invalid token payload');
       }
+      if (payload.username === user.username) {
+        if (!this.tokenBlacklist[splitToken]) {
+          this.tokenBlacklist[splitToken] = user.username;
+        }
+      } else {
+        throw new UnauthorizedException();
+      }
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      throw new UnauthorizedException();
     }
   }
+
 }
 
