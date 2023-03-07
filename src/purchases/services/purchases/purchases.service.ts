@@ -23,8 +23,9 @@ export class PurchasesService {
     
     query = query.leftJoinAndSelect('purchase.productPurchase', 'productPurchase')
       .leftJoinAndSelect('productPurchase.product', 'product')
-      .select(['purchase', 'product.id', 'product.name', 'product.barcode', 'product.price' ,'productPurchase.amount']);
+      .select(['purchase', 'product.id', 'product.name', 'product.barcode', 'productPurchase.price' ,'productPurchase.amount']);
     
     return query.getMany();
   }
 }
+
