@@ -10,7 +10,7 @@ export class PurchasesService {
     private readonly purchasesRepository: Repository<Purchase>,
   ) {}
 
-  async findFilteredPurchases(dateFrom: string, dateTo: string): Promise<Purchase[]> {
+  async findFilteredPurchases(dateFrom: string, dateTo: string, productId?: number, productName?: string): Promise<Purchase[]> {
     let query = this.purchasesRepository.createQueryBuilder('purchase');
     
     if (dateFrom) {
@@ -19,6 +19,14 @@ export class PurchasesService {
     
     if (dateTo) {
       query = query.andWhere('purchase.created <= :dateTo', { dateTo });
+    }
+
+    if (productId) {
+      query = query.andWhere('product.id = :productId', { productId });
+    }
+
+    if (productName) {
+      query = query.andWhere('product.name LIKE :productName', { productName: `%${productName}%` });
     }
     
     query = query.leftJoinAndSelect('purchase.productPurchase', 'productPurchase')
