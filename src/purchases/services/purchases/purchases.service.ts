@@ -12,31 +12,33 @@ export class PurchasesService {
 
   async findFilteredPurchases(dateFrom: string, dateTo: string, productId?: number, productName?: string): Promise<Purchase[]> {
     let query = this.purchasesRepository.createQueryBuilder('purchase');
-
+    
     if (dateFrom) {
       query = query.andWhere('purchase.created >= :dateFrom', { dateFrom });
     }
-
+  
     if (dateTo) {
       query = query.andWhere('purchase.created <= :dateTo', { dateTo });
     }
-
-    if (productId) {
-      console.log(productId);
-
+  
+    if (productId && productName) {
+      query = query.andWhere('(product.name LIKE :productName OR pp.productId = :productId)', { 
+        productName: `%${productName}%`, 
+        productId 
+      });
+    } else if (productName) {
+      query = query.andWhere('product.name LIKE :productName', { productName: `%${productName}%` });
+    } else if (productId) {
       query = query.andWhere('pp.productId = :productId', { productId });
     }
-
-    if (productName) {
-      query = query.andWhere('product.name LIKE :productName', { productName: `%${productName}%` });
-    }
-
+  
     query = query
       .leftJoinAndSelect('purchase.productPurchase', 'pp')
       .leftJoinAndSelect('pp.product', 'product')
       .select(['purchase', 'product.id', 'product.name', 'product.barcode', 'pp.price', 'pp.amount']);
-
+  
     return query.getMany();
   }
+  
 }
 
