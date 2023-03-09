@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
-import { ProductPurchase } from 'src/typeorm';
 
 @Injectable()
 export class ProductsService {
