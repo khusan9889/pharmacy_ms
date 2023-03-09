@@ -22,12 +22,12 @@ export class PurchasesService {
     }
   
     if (productId && productName) {
-      query = query.andWhere('(product.name LIKE :productName OR pp.productId = :productId)', { 
+      query = query.andWhere('(product.name ILIKE :productName OR pp.productId = :productId)', { 
         productName: `%${productName}%`, 
         productId 
       });
     } else if (productName) {
-      query = query.andWhere('product.name LIKE :productName', { productName: `%${productName}%` });
+      query = query.andWhere('product.name ILIKE :productName', { productName: `%${productName}%` });
     } else if (productId) {
       query = query.andWhere('pp.productId = :productId', { productId });
     }
