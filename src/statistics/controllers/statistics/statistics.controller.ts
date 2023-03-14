@@ -20,7 +20,9 @@ async getUserPurchaseStats(
 }
 
   @Get(':userId')
-  async getUserPurchaseStatsByUserId(@Param('userId') userId: string, @Query('dateFrom') dateFrom: string, @Query('dateTo') dateTo: string): Promise<ResultDto<{ userId: number; numPurchases: number; totalPrice: number }>> {
+  async getUserPurchaseStatsByUserId(@Param('userId') userId: string, 
+  @Query('dateFrom') dateFrom: string, 
+  @Query('dateTo') dateTo: string): Promise<ResultDto<{ userId: number; numPurchases: number; totalPrice: number }>> {
     try {
       const stats = await this.statisticsService.getUserPurchaseStats(dateFrom, dateTo);
       const userStats = stats.find(stat => stat.userId === parseInt(userId));
