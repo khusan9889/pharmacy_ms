@@ -6,18 +6,15 @@ import { ResultDto } from 'dto/result.dto';
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Get()
-async getUserPurchaseStats(
-  @Query('dateFrom') dateFrom: string,
-  @Query('dateTo') dateTo: string,
-): Promise<ResultDto<{ userId: number; numPurchases: number; totalPrice: number }[]>> {
-  try {
-    const stats = await this.statisticsService.getUserPurchaseStats(dateFrom, dateTo);
-    return new ResultDto(true, null, stats);
-  } catch (error) {
-    return new ResultDto(false, null, null, error);
+  @Get('common-products')
+  async getCommonProductsStats(@Query('order') order: 'ASC' | 'DESC' = 'DESC'): Promise<ResultDto<{ productId: number; productName: string; count: number }[]>> {
+    try {
+      const stats = await this.statisticsService.getMostCommonProducts(order);
+      return new ResultDto(true, null, stats);
+    } catch (error) {
+      return new ResultDto(false, null, null, error);
+    }
   }
-}
 
   @Get(':userId')
   async getUserPurchaseStatsByUserId(@Param('userId') userId: string, 
@@ -36,10 +33,13 @@ async getUserPurchaseStats(
     }
   }
 
-  @Get('common-products')
-  async getCommonProductsStats(): Promise<ResultDto<{ productId: number; count: number }[]>> {
+  @Get()
+  async getUserPurchaseStats(
+    @Query('dateFrom') dateFrom: string,
+    @Query('dateTo') dateTo: string,
+  ): Promise<ResultDto<{ userId: number; numPurchases: number; totalPrice: number }[]>> {
     try {
-      const stats = await this.statisticsService.getCommonProductsStats();
+      const stats = await this.statisticsService.getUserPurchaseStats(dateFrom, dateTo);
       return new ResultDto(true, null, stats);
     } catch (error) {
       return new ResultDto(false, null, null, error);

@@ -4,12 +4,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Purchase } from 'src/typeorm';
 import { ProductPurchase } from 'src/typeorm';
+import { Product } from 'src/typeorm';
 
 @Injectable()
 export class StatisticsService {
   constructor(
     @InjectRepository(Purchase)
     private readonly purchasesRepository: Repository<Purchase>,
+
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+
     @InjectRepository(ProductPurchase)
     private readonly productPurchaseRepository: Repository<ProductPurchase>,
   ) {}
@@ -40,22 +45,25 @@ export class StatisticsService {
   }));
   }
 
-  async getCommonProductsStats(): Promise<{ productId: number; count: number }[]> {
-  const queryBuilder = this.productPurchaseRepository.createQueryBuilder('pp')
-    .select('pp.product.id', 'productId')
-    .addSelect('pp.product.name', 'productName')
-    .addSelect('COUNT(pp.id)', 'numPurchases')
-    .groupBy('pp.product.id')
-    .orderBy('numPurchases', 'DESC')
-    .limit(10);
+  async getMostCommonProducts(order: 'ASC' | 'DESC' = 'DESC'): Promise<{ productId: number; productName: string; count: number }[]> {
+    const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
+    queryBuilder
+      .select('product_purchase.productId', 'productId')
+      .addSelect('product.name', 'productName')
+      .addSelect('COUNT(product_purchase.id)', 'count')
+      .leftJoin('product_purchase.product', 'product')
+      .groupBy('product_purchase.productId, product.name')
+      .orderBy('count', order)
+      .limit(10);
+  
+    const results = await queryBuilder.getRawMany();
+  
+    return results.map((result) => ({
+      productId: result.productId,
+      productName: result.productName,
+      count: parseInt(result.count),
+    }));
+  }
 
-  const results = await queryBuilder.getRawMany();
-
-  return results.map(result => ({
-    productId: result.productId,
-    productName: result.productName,
-    count: parseInt(result.numPurchases),
-  }));
-}
 }
 
