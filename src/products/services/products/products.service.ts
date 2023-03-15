@@ -26,7 +26,7 @@ export class ProductsService {
         return this.productRepository.findOne(options);
     }
 
-    async addProduct(addProductDto: CreateProductDto, category: { id: number } = { id: null }): Promise<Product> {
+    async addProduct(addProductDto: CreateProductDto, category: { id?: number } = {}): Promise<Product> {
 
         let product = await this.productRepository.findOne({ where: { barcode: addProductDto.barcode, expired_date: addProductDto.expired_date } });
         if (product) {
@@ -46,7 +46,10 @@ export class ProductsService {
                 price,
                 trade_price } = addProductDto
     
-                const categoryInstance = await this.categoryRepository.findOne({ where: { id: category.id } });
+            let categoryInstance = null;
+            if (category.id) {
+                categoryInstance = await this.categoryRepository.findOne({ where: { id: category.id } });
+            }
     
             const result = await this.productRepository.save({
                 name,
