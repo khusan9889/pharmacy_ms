@@ -7,7 +7,10 @@ export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
   @Get('common-products')
-  async getCommonProductsStats(@Query('order') order: 'ASC' | 'DESC' = 'DESC'): Promise<ResultDto<{ productId: number; productName: string; count: number }[]>> {
+  async getCommonProductsStats(
+    @Query('order') order: 'ASC' | 'DESC' = 'DESC',
+    
+  ): Promise<ResultDto<{ productId: number; productName: string; count: number; totalPrice?: number }[]>> {
     try {
       const stats = await this.statisticsService.getMostCommonProducts(order);
       return new ResultDto(true, null, stats);

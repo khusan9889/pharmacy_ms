@@ -17,6 +17,7 @@ export class StatisticsService {
 
     @InjectRepository(ProductPurchase)
     private readonly productPurchaseRepository: Repository<ProductPurchase>,
+
   ) {}
 
  async getUserPurchaseStats(dateFrom?: string, dateTo?: string): Promise<{ userId: number; numPurchases: number; totalPrice: number }[]> {
@@ -45,12 +46,13 @@ export class StatisticsService {
   }));
   }
 
-  async getMostCommonProducts(order: 'ASC' | 'DESC' = 'DESC'): Promise<{ productId: number; productName: string; count: number }[]> {
+  async getMostCommonProducts(order: 'ASC' | 'DESC' = 'DESC'): Promise<{ productId: number; productName: string; count: number; overallPrice: number }[]> {
     const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
     queryBuilder
       .select('product_purchase.productId', 'productId')
       .addSelect('product.name', 'productName')
       .addSelect('COUNT(product_purchase.id)', 'count')
+      .addSelect('SUM(product_purchase.price)', 'overallPrice')
       .leftJoin('product_purchase.product', 'product')
       .groupBy('product_purchase.productId, product.name')
       .orderBy('count', order)
@@ -62,6 +64,7 @@ export class StatisticsService {
       productId: result.productId,
       productName: result.productName,
       count: parseInt(result.count),
+      overallPrice: parseFloat(result.overallPrice)
     }));
   }
 
