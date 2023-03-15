@@ -46,7 +46,7 @@ export class StatisticsService {
   }));
   }
 
-  async getMostCommonProducts(order: 'ASC' | 'DESC' = 'DESC'): Promise<{ productId: number; productName: string; count: number; overallPrice: number }[]> {
+  async getMostCommonProducts(order: 'ASC' | 'DESC' = 'DESC', orderBy: 'count' | 'overallPrice' = 'overallPrice'): Promise<{ productId: number; productName: string; count: number; overallPrice: number }[]> {
     const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
     queryBuilder
       .select('product_purchase.productId', 'productId')
@@ -55,8 +55,7 @@ export class StatisticsService {
       .addSelect('SUM(product_purchase.price)', 'overallPrice')
       .leftJoin('product_purchase.product', 'product')
       .groupBy('product_purchase.productId, product.name')
-      .orderBy('count', order)
-      .limit(10);
+      .orderBy(orderBy === 'count' ? 'count' : 'SUM(product_purchase.price)', order);
   
     const results = await queryBuilder.getRawMany();
   
