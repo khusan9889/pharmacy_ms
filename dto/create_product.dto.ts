@@ -18,7 +18,7 @@ export class CreateProductDto {
   barcode: string;
 
   @IsOptional()
-  category: number;
+  category: { id: number };
 
   @IsNotEmpty()
   @IsDateString()

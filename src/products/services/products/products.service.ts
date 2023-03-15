@@ -4,12 +4,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
+import { Category } from 'src/typeorm';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(Product)
         private readonly productRepository: Repository<Product>,
+
+        @InjectRepository(Category)
+        private readonly categoryRepository: Repository<Category>,
+
     ) { }
 
     async findAll(): Promise<Product[]> {
@@ -21,7 +26,7 @@ export class ProductsService {
         return this.productRepository.findOne(options);
     }
 
-    async addProduct(addProductDto: CreateProductDto): Promise<Product> {
+    async addProduct(addProductDto: CreateProductDto, category: { id: number } = { id: null }): Promise<Product> {
 
         let product = await this.productRepository.findOne({ where: { barcode: addProductDto.barcode, expired_date: addProductDto.expired_date } });
         if (product) {
@@ -40,6 +45,9 @@ export class ProductsService {
                 manufacturer,
                 price,
                 trade_price } = addProductDto
+    
+                const categoryInstance = await this.categoryRepository.findOne({ where: { id: category.id } });
+    
             const result = await this.productRepository.save({
                 name,
                 short_description,
@@ -50,9 +58,10 @@ export class ProductsService {
                 amount,
                 manufacturer,
                 price,
-                trade_price
+                trade_price,
+                category: categoryInstance
             })
-            return result[0]
+            return result;
         }
     }
 
@@ -80,3 +89,4 @@ export class ProductsService {
     }
 
 }
+
