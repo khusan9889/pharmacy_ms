@@ -11,10 +11,12 @@ export class StatisticsController {
   @Get('common-products')
   async getCommonProductsStats(
     @Query('order') order: 'ASC' | 'DESC' = 'DESC',
+    @Query('dateFrom') dateFrom: string,
+    @Query('dateTo') dateTo: string,
 
   ): Promise<ResultDto<{ productId: number; productName: string; count: number; totalPrice?: number }[]>> {
     try {
-      const stats = await this.statisticsService.getMostCommonProducts(order);
+      const stats = await this.statisticsService.getMostCommonProducts(dateFrom, dateTo, order);
       return new ResultDto(true, null, stats);
     } catch (error) {
       return new ResultDto(false, null, null, error);
@@ -24,9 +26,11 @@ export class StatisticsController {
   @Get('category-stats')
   async getCategorySalesStats(
       @Query('order') order: 'ASC' | 'DESC' = 'DESC',
+      @Query('dateFrom') dateFrom: string,
+      @Query('dateTo') dateTo: string,
   ): Promise<ResultDto<{categoryId: number; categoryName: string; numProductsSold: number; totalPrice?: number}[]>> {
     try {
-      const stats = await this.statisticsService.getCategorySalesStats(order);
+      const stats = await this.statisticsService.getCategorySalesStats(dateFrom, dateTo, order);
       return new ResultDto(true, null, stats);
     } catch(error) {
       return new ResultDto(false, null, null, error);

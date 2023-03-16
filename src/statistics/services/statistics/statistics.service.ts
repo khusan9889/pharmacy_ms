@@ -49,8 +49,16 @@ export class StatisticsService {
   }));
   }
 
-  async getMostCommonProducts(order: 'ASC' | 'DESC' = 'DESC', orderBy: 'count' | 'overallPrice' = 'overallPrice'): Promise<{ productId: number; productName: string; count: number; overallPrice: number }[]> {
+  async getMostCommonProducts(dateFrom?: string, dateTo?: string, order: 'ASC' | 'DESC' = 'DESC', orderBy: 'count' | 'overallPrice' = 'overallPrice'): Promise<{ productId: number; productName: string; count: number; overallPrice: number }[]> {
     const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
+
+    if (dateFrom) {
+      queryBuilder.andWhere('product_purchase.created >= :dateFrom', { dateFrom });
+    }
+    if (dateTo) {
+      queryBuilder.andWhere('product_purchase.created <= :dateTo', { dateTo });
+    }
+
     queryBuilder
       .select('product_purchase.productId', 'productId')
       .addSelect('product.name', 'productName')
@@ -70,8 +78,17 @@ export class StatisticsService {
     }));
   }
 
-  async getCategorySalesStats(order: 'ASC' | 'DESC' = 'DESC', orderBy: 'count' | 'overallPrice' = 'overallPrice'): Promise<{ categoryId: number; categoryName: string; numProductsSold: number; totalPrice: number }[]> {
+  async getCategorySalesStats(dateFrom?: string, dateTo?: string, order: 'ASC' | 'DESC' = 'DESC', orderBy: 'count' | 'overallPrice' = 'overallPrice'): Promise<{ categoryId: number; categoryName: string; numProductsSold: number; totalPrice: number }[]> {
+    
     const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
+
+    if (dateFrom) {
+      queryBuilder.andWhere('product_purchase.created >= :dateFrom', { dateFrom });
+    }
+    if (dateTo) {
+      queryBuilder.andWhere('product_purchase.created <= :dateTo', { dateTo });
+    }
+    
     
     queryBuilder
       .select('product.categoryId', 'categoryId')
