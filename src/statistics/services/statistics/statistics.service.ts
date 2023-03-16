@@ -70,35 +70,28 @@ export class StatisticsService {
     }));
   }
 
-  async getCategorySalesStats(dateFrom?: string, dateTo?: string): Promise<{ categoryId: number; categoryName: string; numProductsSold: number; totalPrice: number }[]> {
-  const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
-  
-  if (dateFrom) {
-    queryBuilder.andWhere('product_purchase.created >= :dateFrom', { dateFrom });
+  async getCategorySalesStats(order: 'ASC' | 'DESC' = 'DESC', orderBy: 'count' | 'overallPrice' = 'overallPrice'): Promise<{ categoryId: number; categoryName: string; numProductsSold: number; totalPrice: number }[]> {
+    const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
+    
+    queryBuilder
+      .select('product.categoryId', 'categoryId')
+      .addSelect('category.name', 'categoryName')
+      .addSelect('COUNT(product_purchase.id)', 'numProductsSold')
+      .addSelect('SUM(product_purchase.price)', 'totalPrice')
+      .leftJoin('product_purchase.product', 'product')
+      .leftJoin('product.category', 'category')
+      .groupBy('product.categoryId, category.name')
+      .orderBy(orderBy === 'count' ? 'count' : 'SUM(product_purchase.price)', order);
+    
+    const results = await queryBuilder.getRawMany();
+    
+    return results.map((result) => ({
+      categoryId: result.categoryId,
+      categoryName: result.categoryName,
+      numProductsSold: parseInt(result.numProductsSold),
+      totalPrice: parseFloat(result.totalPrice)
+    }));
   }
-
-  if (dateTo) {
-    queryBuilder.andWhere('product_purchase.created <= :dateTo', { dateTo });
-  }
-
-  queryBuilder
-    .select('product.categoryId', 'categoryId')
-    .addSelect('category.name', 'categoryName')
-    .addSelect('COUNT(product_purchase.id)', 'numProductsSold')
-    .addSelect('SUM(product_purchase.price)', 'totalPrice')
-    .leftJoin('product_purchase.product', 'product')
-    .leftJoin('product.category', 'category')
-    .groupBy('product.categoryId, category.name');
-  
-  const results = await queryBuilder.getRawMany();
-  
-  return results.map((result) => ({
-    categoryId: result.categoryId,
-    categoryName: result.categoryName,
-    numProductsSold: parseInt(result.numProductsSold),
-    totalPrice: parseFloat(result.totalPrice)
-  }));
-}
 
 }
 

@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { StatisticsService } from 'src/statistics/services/statistics/statistics.service';
 import { ResultDto } from 'dto/result.dto';
 
+
 @Controller('statistics')
 export class StatisticsController {
   constructor(
@@ -22,11 +23,14 @@ export class StatisticsController {
 
   @Get('category-stats')
   async getCategorySalesStats(
-    @Query('dateFrom') dateFrom: string,
-    @Query('dateTo') dateTo: string,
-  ) {
-    const stats = await this.statisticsService.getCategorySalesStats(dateFrom, dateTo);
-    return stats;
+      @Query('order') order: 'ASC' | 'DESC' = 'DESC',
+  ): Promise<ResultDto<{categoryId: number; categoryName: string; numProductsSold: number; totalPrice?: number}[]>> {
+    try {
+      const stats = await this.statisticsService.getCategorySalesStats(order);
+      return new ResultDto(true, null, stats);
+    } catch(error) {
+      return new ResultDto(false, null, null, error);
+    }   
   }
 
   @Get(':userId')
