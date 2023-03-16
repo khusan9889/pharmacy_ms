@@ -4,22 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Purchase } from 'src/typeorm';
 import { ProductPurchase } from 'src/typeorm';
-import { Product } from 'src/typeorm';
-import { ProductsService } from 'src/products/services/products/products.service';
+
 
 @Injectable()
 export class StatisticsService {
   constructor(
     @InjectRepository(Purchase)
     private readonly purchasesRepository: Repository<Purchase>,
-
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
-
+    
     @InjectRepository(ProductPurchase)
     private readonly productPurchaseRepository: Repository<ProductPurchase>,
-
-    
 
   ) {}
 
