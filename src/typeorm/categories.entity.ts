@@ -13,4 +13,6 @@ export class Category {
   @JoinColumn()
   products: Product[];
 
+  
+
 }

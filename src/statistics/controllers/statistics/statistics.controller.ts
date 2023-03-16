@@ -4,12 +4,13 @@ import { ResultDto } from 'dto/result.dto';
 
 @Controller('statistics')
 export class StatisticsController {
-  constructor(private readonly statisticsService: StatisticsService) {}
+  constructor(
+    private readonly statisticsService: StatisticsService) { }
 
   @Get('common-products')
   async getCommonProductsStats(
     @Query('order') order: 'ASC' | 'DESC' = 'DESC',
-    
+
   ): Promise<ResultDto<{ productId: number; productName: string; count: number; totalPrice?: number }[]>> {
     try {
       const stats = await this.statisticsService.getMostCommonProducts(order);
@@ -19,10 +20,19 @@ export class StatisticsController {
     }
   }
 
+  @Get('category-stats')
+  async getCategorySalesStats(
+    @Query('dateFrom') dateFrom: string,
+    @Query('dateTo') dateTo: string,
+  ) {
+    const stats = await this.statisticsService.getCategorySalesStats(dateFrom, dateTo);
+    return stats;
+  }
+
   @Get(':userId')
-  async getUserPurchaseStatsByUserId(@Param('userId') userId: string, 
-  @Query('dateFrom') dateFrom: string, 
-  @Query('dateTo') dateTo: string): Promise<ResultDto<{ userId: number; numPurchases: number; totalPrice: number }>> {
+  async getUserPurchaseStatsByUserId(@Param('userId') userId: string,
+    @Query('dateFrom') dateFrom: string,
+    @Query('dateTo') dateTo: string): Promise<ResultDto<{ userId: number; numPurchases: number; totalPrice: number }>> {
     try {
       const stats = await this.statisticsService.getUserPurchaseStats(dateFrom, dateTo);
       const userStats = stats.find(stat => stat.userId === parseInt(userId));
@@ -48,5 +58,6 @@ export class StatisticsController {
       return new ResultDto(false, null, null, error);
     }
   }
+
 }
 

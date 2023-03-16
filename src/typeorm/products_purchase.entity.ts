@@ -19,5 +19,14 @@ export class ProductPurchase {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updated: Date;
+
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean;
 }
 

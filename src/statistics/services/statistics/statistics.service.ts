@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Purchase } from 'src/typeorm';
 import { ProductPurchase } from 'src/typeorm';
 import { Product } from 'src/typeorm';
+import { ProductsService } from 'src/products/services/products/products.service';
 
 @Injectable()
 export class StatisticsService {
@@ -17,6 +18,8 @@ export class StatisticsService {
 
     @InjectRepository(ProductPurchase)
     private readonly productPurchaseRepository: Repository<ProductPurchase>,
+
+    
 
   ) {}
 
@@ -66,6 +69,36 @@ export class StatisticsService {
       overallPrice: parseFloat(result.overallPrice)
     }));
   }
+
+  async getCategorySalesStats(dateFrom?: string, dateTo?: string): Promise<{ categoryId: number; categoryName: string; numProductsSold: number; totalPrice: number }[]> {
+  const queryBuilder = this.productPurchaseRepository.createQueryBuilder('product_purchase');
+  
+  if (dateFrom) {
+    queryBuilder.andWhere('product_purchase.created >= :dateFrom', { dateFrom });
+  }
+
+  if (dateTo) {
+    queryBuilder.andWhere('product_purchase.created <= :dateTo', { dateTo });
+  }
+
+  queryBuilder
+    .select('product.categoryId', 'categoryId')
+    .addSelect('category.name', 'categoryName')
+    .addSelect('COUNT(product_purchase.id)', 'numProductsSold')
+    .addSelect('SUM(product_purchase.price)', 'totalPrice')
+    .leftJoin('product_purchase.product', 'product')
+    .leftJoin('product.category', 'category')
+    .groupBy('product.categoryId, category.name');
+  
+  const results = await queryBuilder.getRawMany();
+  
+  return results.map((result) => ({
+    categoryId: result.categoryId,
+    categoryName: result.categoryName,
+    numProductsSold: parseInt(result.numProductsSold),
+    totalPrice: parseFloat(result.totalPrice)
+  }));
+}
 
 }
 
