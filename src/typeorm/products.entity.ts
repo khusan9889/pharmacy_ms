@@ -19,6 +19,9 @@ export class Product {
   @Column('text')
   short_description: string;
 
+  @Column({ default: '' })
+  type: string;
+
   @Column()
   barcode: string;
 
