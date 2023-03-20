@@ -14,16 +14,21 @@ export class ProductsController {
     return new ResultDto(true, 'Successfully retrieved products', products);
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: number): Promise<ResultDto<Product>> {
-    const product = await this.productsService.findOne(id);
-    return new ResultDto(true, 'Successfully retrieved product', product);
+  @Get('expired')
+    async findAllExpired(): Promise<Product[]> {
+        return this.productsService.findAllExpired();
   }
 
   @Post()
   async addProduct(@Body() createProductDto: CreateProductDto): Promise<ResultDto<Product>> {
     const product = await this.productsService.addProduct(createProductDto);
     return new ResultDto(true, 'Successfully added product', product);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<ResultDto<Product>> {
+    const product = await this.productsService.findOne(id);
+    return new ResultDto(true, 'Successfully retrieved product', product);
   }
 
   @Put(':id')
@@ -37,4 +42,6 @@ export class ProductsController {
     await this.productsService.delete(id);
     return new ResultDto(true, 'Successfully deleted product');
   }
+
+  
 }
