@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Put, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, Query, BadRequestException } from '@nestjs/common';
 import { ProductsService } from 'src/products/services/products/products.service';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
@@ -9,15 +9,17 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Get()
-  async findAll(@Query('expired') expired?: boolean): Promise<ResultDto<Product[]>> {
-      const products = await this.productsService.findAll(expired);
-      return new ResultDto(true, 'Successfully retrieved products', products);
+  async findAll(@Query('expired') expired?: string): Promise<ResultDto<Product[]>> {
+    let expiredDate;
+    if (expired) {
+        expiredDate = new Date(expired);
+        if (isNaN(expiredDate.getTime())) {
+            throw new BadRequestException('Invalid date format. Please provide date in yyyy-MM-dd format.');
+        }
+    }
+    const products = await this.productsService.findAll(expiredDate);
+    return new ResultDto(true, 'Successfully retrieved products', products);
   }
-
-  // @Get('expired')
-  //   async findAllExpired(): Promise<Product[]> {
-  //       return this.productsService.findAllExpired();
-  // }
 
   @Post()
   async addProduct(@Body() createProductDto: CreateProductDto): Promise<ResultDto<Product>> {

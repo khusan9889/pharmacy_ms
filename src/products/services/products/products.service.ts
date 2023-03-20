@@ -1,7 +1,7 @@
 //products.service.ts
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, LessThanOrEqual, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
 import { Category } from 'src/typeorm';
@@ -17,14 +17,11 @@ export class ProductsService {
 
     ) { }
 
-    async findAll(expired?: boolean): Promise<Product[]> {
+    async findAll(expiredDate?: Date): Promise<Product[]> {
         const options: FindManyOptions<Product> = { relations: ['category'] };
-        if (expired) {
-            const currentDate = new Date();
-            const dateString = currentDate.toISOString().substring(0, 10);
-            const expiredDate = new Date(dateString);
-            options.where = { expired_date: expiredDate };
-        }
+        if (expiredDate) {
+            options.where = { expired_date: LessThanOrEqual(expiredDate) };
+        }        
         return this.productRepository.find(options);
     }
     
@@ -97,18 +94,6 @@ export class ProductsService {
         
         await this.productRepository.save(product);
     }
-
-    // async findAllExpired(): Promise<Product[]> {
-    //     const currentDate = new Date();
-    //     const dateString = currentDate.toISOString().substring(0, 10);
-    //     const expiredDate = new Date(dateString);
-    //     return this.productRepository.find({
-    //         where: {
-    //             expired_date: expiredDate,
-    //         },
-    //         relations: ['category'],
-    //     });
-    // }
 
 }
 
