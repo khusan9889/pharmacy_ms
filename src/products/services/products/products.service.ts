@@ -1,7 +1,7 @@
 //products.service.ts
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, LessThanOrEqual, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, LessThanOrEqual, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
 import { Category } from 'src/typeorm';
@@ -93,6 +93,22 @@ export class ProductsService {
         product.amount -= purchaseAmount;
         
         await this.productRepository.save(product);
+    }
+
+    async removeExpiredProducts(expirationDate: Date): Promise<void> {
+        const expiredProducts = await this.productRepository.find({
+          where: { expired_date: LessThanOrEqual(expirationDate) }
+        });
+      
+        if (expiredProducts.length === 0) {
+          return;
+        }
+      
+        const currentDateTime = new Date();
+        await this.productRepository.update(
+          { id: In(expiredProducts.map(p => p.id)) },
+          { removed_at: currentDateTime }
+        );
     }
 
 }

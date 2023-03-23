@@ -45,5 +45,14 @@ export class ProductsController {
     return new ResultDto(true, 'Successfully deleted product');
   }
 
+  @Delete('expired/:expirationDate?')
+  async removeExpiredProducts(
+    @Param('expirationDate') expirationDate?: string
+  ): Promise<ResultDto<void>> {
+    const date = expirationDate ? new Date(expirationDate) : new Date();
+    await this.productsService.removeExpiredProducts(date);
+    return new ResultDto(true, 'Successfully removed expired products');
+  }
+
 }
 
