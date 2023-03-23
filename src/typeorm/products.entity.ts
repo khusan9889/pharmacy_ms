@@ -34,6 +34,9 @@ export class Product {
   @Column({ type: 'date' })
   expired_date: Date;
 
+  @Column({ type: 'timestamp', nullable: true })
+  removed_at: Date = null;
+
   @Column('date')
   received_date: Date;
 
