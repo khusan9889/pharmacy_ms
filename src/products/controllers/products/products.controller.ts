@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Put, Delete, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, Query, BadRequestException, ParseIntPipe } from '@nestjs/common';
 import { ProductsService } from 'src/products/services/products/products.service';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
