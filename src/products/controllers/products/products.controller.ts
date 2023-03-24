@@ -9,8 +9,8 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Get()
-  async findAll(): Promise<ResultDto<Product[]>> {
-    const products = await this.productsService.findAll();
+  async findAll(@Query('order') order: 'ASC' | 'DESC' = 'DESC'): Promise<ResultDto<Product[]>> {
+    const products = await this.productsService.findAll(order);
     return new ResultDto(true, 'Successfully retrieved products', products);
   }
 

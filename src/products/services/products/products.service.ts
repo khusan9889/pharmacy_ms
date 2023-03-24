@@ -17,12 +17,13 @@ export class ProductsService {
 
     ) { }
 
-    async findAll(expiredDate?: Date): Promise<Product[]> {
-        const options: FindManyOptions<Product> = { relations: ['category'] };
-        if (expiredDate) {
-            options.where = { expired_date: LessThanOrEqual(expiredDate) };
-        }        
-        return this.productRepository.find(options);
+    async findAll(order: 'ASC' | 'DESC' = 'DESC'): Promise<Product[]> {
+        return this.productRepository.find({
+          relations: ['category'],
+          order: {
+            id: order,
+          },
+        });
     }
     
     async findOne(id: number): Promise<Product> {
