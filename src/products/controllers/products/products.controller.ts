@@ -9,16 +9,22 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Get()
-  async findAll(@Query('expired') expired?: string): Promise<ResultDto<Product[]>> {
-    let expiredDate;
-    if (expired) {
-        expiredDate = new Date(expired);
-        if (isNaN(expiredDate.getTime())) {
-            throw new BadRequestException('Invalid date format. Please provide date in yyyy-MM-dd format.');
-        }
-    }
-    const products = await this.productsService.findAll(expiredDate);
+  async findAll(): Promise<ResultDto<Product[]>> {
+    const products = await this.productsService.findAll();
     return new ResultDto(true, 'Successfully retrieved products', products);
+  }
+
+  @Get('expired-products')
+  async findAllExpired(@Query('expirationDate') expirationDateString?: string): Promise<ResultDto<Product[]>> {
+    let expirationDate: Date | undefined;
+    if (expirationDateString) {
+      expirationDate = new Date(expirationDateString);
+      if (isNaN(expirationDate.getTime())) {
+        throw new BadRequestException('Invalid date format. Please provide date in yyyy-MM-dd format.');
+      }
+    }
+    const products = await this.productsService.findAllExpired(expirationDate);
+    return new ResultDto(true, 'Successfully retrieved expired products', products);
   }
 
   @Post()

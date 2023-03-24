@@ -95,15 +95,28 @@ export class ProductsService {
         await this.productRepository.save(product);
     }
 
+    async findAllExpired(expirationDate?: Date): Promise<Product[]> {
+        const currentDate = new Date();
+        const expiredDate = expirationDate ? expirationDate : currentDate;
+        const dateString = expiredDate.toISOString().substring(0, 10);
+        const expiredDateTime = new Date(dateString);
+        return this.productRepository.find({
+          where: {
+            expired_date: LessThanOrEqual(expiredDateTime),
+          },
+          relations: ['category'],
+        });
+    }
+
     async removeExpiredProducts(expirationDate: Date): Promise<void> {
         const expiredProducts = await this.productRepository.find({
           where: { expired_date: LessThanOrEqual(expirationDate) }
         });
-      
+
         if (expiredProducts.length === 0) {
           return;
         }
-      
+
         const currentDateTime = new Date();
         await this.productRepository.update(
           { id: In(expiredProducts.map(p => p.id)) },
