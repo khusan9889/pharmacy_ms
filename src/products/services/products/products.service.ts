@@ -19,13 +19,16 @@ export class ProductsService {
 
     async findAll(order: 'ASC' | 'DESC' = 'DESC'): Promise<Product[]> {
         return this.productRepository.find({
-          relations: ['category'],
-          order: {
-            id: order,
-          },
+            relations: ['category'],
+            where: {
+                removed_at: IsNull(),
+            },
+            order: {
+                id: order,
+            },
         });
     }
-    
+
     async findOne(id: number): Promise<Product> {
         const options: FindOneOptions<Product> = { where: { id }, relations: ['category'] }
         return this.productRepository.findOne(options);
@@ -50,12 +53,12 @@ export class ProductsService {
                 manufacturer,
                 price,
                 trade_price } = addProductDto
-    
+
             let categoryInstance = null;
             if (category.id) {
                 categoryInstance = await this.categoryRepository.findOne({ where: { id: category.id } });
             }
-    
+
             const result = await this.productRepository.save({
                 name,
                 short_description,
@@ -92,7 +95,7 @@ export class ProductsService {
             throw new BadRequestException(`Not enough quantity for product with ID ${productId}`);
         }
         product.amount -= purchaseAmount;
-        
+
         await this.productRepository.save(product);
     }
 
@@ -102,27 +105,30 @@ export class ProductsService {
         const dateString = expiredDate.toISOString().substring(0, 10);
         const expiredDateTime = new Date(dateString);
         return this.productRepository.find({
-          where: {
-            expired_date: LessThanOrEqual(expiredDateTime),
-            removed_at: IsNull()
-          },
-          relations: ['category'],
+            where: {
+                expired_date: LessThanOrEqual(expiredDateTime),
+                removed_at: IsNull()
+            },
+            relations: ['category'],
+            order: {
+                expired_date: 'ASC'
+            }
         });
     }
 
     async removeExpiredProducts(expirationDate: Date): Promise<void> {
         const expiredProducts = await this.productRepository.find({
-          where: { expired_date: LessThanOrEqual(expirationDate) }
+            where: { expired_date: LessThanOrEqual(expirationDate) }
         });
 
         if (expiredProducts.length === 0) {
-          return;
+            return;
         }
 
         const currentDateTime = new Date();
         await this.productRepository.update(
-          { id: In(expiredProducts.map(p => p.id)) },
-          { removed_at: currentDateTime }
+            { id: In(expiredProducts.map(p => p.id)) },
+            { removed_at: currentDateTime }
         );
     }
 
@@ -130,11 +136,11 @@ export class ProductsService {
         const products = await this.productRepository.find({
             where: { id: In(ids) },
         });
-    
+
         if (products.length === 0) {
             return;
         }
-    
+
         const currentDateTime = new Date();
         await this.productRepository.update(
             { id: In(products.map((p) => p.id)) },
