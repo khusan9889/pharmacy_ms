@@ -1,7 +1,7 @@
 //products.service.ts
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, In, LessThanOrEqual, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, IsNull, LessThanOrEqual, Repository } from 'typeorm';
 import { Product } from 'src/typeorm';
 import { CreateProductDto } from 'dto/create_product.dto';
 import { Category } from 'src/typeorm';
@@ -103,6 +103,7 @@ export class ProductsService {
         return this.productRepository.find({
           where: {
             expired_date: LessThanOrEqual(expiredDateTime),
+            removed_at: IsNull()
           },
           relations: ['category'],
         });
