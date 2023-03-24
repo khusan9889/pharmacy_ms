@@ -60,5 +60,11 @@ export class ProductsController {
     return new ResultDto(true, 'Successfully removed expired products');
   }
 
+  @Delete('remove-expired/:ids')
+  async deleteExpiredProducts(@Param('ids') ids: string): Promise<ResultDto<void>> {
+    const idList = ids.split(',').map((id) => parseInt(id.trim()));
+    await this.productsService.deleteExpiredProductsID(idList);
+    return new ResultDto(true, 'Successfully deleted expired products');
+  }
 }
 

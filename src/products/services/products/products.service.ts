@@ -126,9 +126,21 @@ export class ProductsService {
         );
     }
 
+    async deleteExpiredProductsID(ids: number[]): Promise<void> {
+        const products = await this.productRepository.find({
+            where: { id: In(ids) },
+        });
     
-
+        if (products.length === 0) {
+            return;
+        }
     
+        const currentDateTime = new Date();
+        await this.productRepository.update(
+            { id: In(products.map((p) => p.id)) },
+            { removed_at: currentDateTime },
+        );
+    }
 
 }
 
