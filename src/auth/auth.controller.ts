@@ -1,10 +1,11 @@
 //auth.controller.ts
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { Request } from 'express';
 import { User } from 'src/typeorm';
 import { JwtAuthGuard } from 'src/products_purchase/services/products_purchase/JwtAuthGuard';
+import { Response } from 'express';
 
 
 @Controller('auth')
@@ -12,8 +13,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('login')
-  create(@Body() authLoginDto: AuthLoginDto) {
-    return this.authService.login(authLoginDto);
+  async login(@Body() authLoginDto: AuthLoginDto, @Res() res: Response) {
+    const { access_token, user } = await this.authService.login(authLoginDto, res);
+    return { access_token, user };
   }
 
   @Post('logout')

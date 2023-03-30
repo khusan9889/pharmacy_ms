@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm';
@@ -6,6 +7,9 @@ import { Repository } from 'typeorm';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import * as cookie from 'cookie';
+import * as cookieParser from 'cookie-parser';
+
 
 @Injectable()
 export class AuthService {
@@ -17,7 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) { }
 
-  async login({ username, password }: AuthLoginDto) {
+  async login({ username, password }: AuthLoginDto, @Res() res: Response) {
     const hasUser = await this.userRepository.findOne({ where: { username } })
     if (!hasUser)
       throw new UnauthorizedException('Invalid username')
@@ -25,10 +29,16 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
     }
-
+  
     const payload = { username };
     const token = this.jwtService.sign(payload);
-
+  
+    // Set the access token in a cookie
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+    });
+  
     return { access_token: token, user: hasUser };
   }
 
