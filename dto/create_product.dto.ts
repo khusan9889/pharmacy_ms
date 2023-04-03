@@ -15,6 +15,10 @@ export class CreateProductDto {
 
   @IsNotEmpty()
   @IsString()
+  type: string;
+
+  @IsNotEmpty()
+  @IsString()
   barcode: string;
 
   @IsOptional()
@@ -35,6 +39,15 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsNumber()
   amount: number;
+
+  @IsString()
+  package_type: string;
+
+  @IsNumber()
+  per_box: number;
+
+  @IsNumber()
+  package_amount: number;
 
   @IsOptional()
   country: number;

@@ -19,7 +19,7 @@ export class Product {
   @Column('text')
   short_description: string;
 
-  @Column({ default: '' })
+  @Column()
   type: string;
 
   @Column()
@@ -76,3 +76,4 @@ export class Product {
   @Column({ type: 'boolean', default: false })
   deleted: boolean;
 }
+
