@@ -104,6 +104,20 @@ export class ProductsService {
         }
         product.amount -= purchaseAmount;
 
+        // const condition = product.amount / product.per_box==0
+        // let update_package_am = 0
+        // if (condition) {
+        //     const total_box = product.amount / product.per_box
+        //     update_package_am = product.package_amount - total_box
+        // }
+        // if (product.amount!=0) {
+        //     const condition = product.amount / product.per_box
+        //     await this.productRepository.update(product)
+        // }
+        
+        
+        
+
         await this.productRepository.save(product);
     }
 

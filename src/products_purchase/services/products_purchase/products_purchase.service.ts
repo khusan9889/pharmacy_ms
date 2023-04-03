@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductsService } from 'src/products/services/products/products.service';
-import { ProductPurchase, Purchase } from 'src/typeorm';
+import { Product, ProductPurchase, Purchase } from 'src/typeorm';
 import { Repository } from 'typeorm';
 import { JwtAuthGuard } from './JwtAuthGuard';
 
@@ -25,7 +25,30 @@ export class ProductsPurchaseService {
   
     for (const product_purchase of product_purchases) {
       const product = await this.productsService.findOne(product_purchase.product);
-      await this.productsService.purchaseProduct(product_purchase?.product, product_purchase.amount);
+      
+      // Calculate total product amount
+      let total_product_amount = product_purchase.amount;
+      if (product.package_type) {
+        if (product_purchase.per_box && product_purchase.package_amount) {
+          total_product_amount = product_purchase.per_box * product_purchase.package_amount;
+        } else if (product_purchase.package_amount) {
+          total_product_amount = product_purchase.package_amount;
+        }
+      }
+      
+      // Subtract package amount from total amount
+      // const condition = product.amount % product.per_box==0
+      // let update_package_am = 0
+      // if (condition) {
+      //   const total_box = product.amount % product.per_box
+      //   update_package_am = product.package_amount - total_box
+      //   product.package_amount = update_package_am
+        
+      // }
+
+      
+  
+      await this.productsService.purchaseProduct(product_purchase?.product, total_product_amount);
       const price = product.price;
       const productPurchase = {
         ...product_purchase,
@@ -55,6 +78,6 @@ export class ProductsPurchaseService {
     await this.productPurchaseRepository.save(purchase.productPurchase);
   
     return productPurchaseRecords;
-}
+  }
 }
 
