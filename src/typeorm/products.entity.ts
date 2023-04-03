@@ -43,6 +43,15 @@ export class Product {
   @Column()
   amount: number;
 
+  @Column({default: null})
+  package_type: string;
+
+  @Column({default: null})
+  per_box: number;
+
+  @Column({default: null})
+  package_amount: number;
+
   @ManyToOne(() => Country, country => country.products)
   country: Country;
 
