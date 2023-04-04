@@ -99,25 +99,25 @@ export class ProductsService {
         if (!product) {
             throw new NotFoundException(`Product with ID ${productId} not found`);
         }
-        if (product.amount < purchaseAmount) {
+    
+        // Calculate the total number of packages available for the product
+        const packageAmount = Math.floor(product.amount / product.per_box);
+    
+        if (packageAmount === 0) {
+            throw new BadRequestException(`Product with ID ${productId} is out of stock`);
+        }
+        
+        if (purchaseAmount > packageAmount * product.per_box) {
             throw new BadRequestException(`Not enough quantity for product with ID ${productId}`);
         }
+        
         product.amount -= purchaseAmount;
-
-        // const condition = product.amount / product.per_box==0
-        // let update_package_am = 0
-        // if (condition) {
-        //     const total_box = product.amount / product.per_box
-        //     update_package_am = product.package_amount - total_box
-        // }
-        // if (product.amount!=0) {
-        //     const condition = product.amount / product.per_box
-        //     await this.productRepository.update(product)
-        // }
         
-        
-        
-
+        // Subtract the package amount if necessary
+        if (product.amount % product.per_box === 0) {
+            product.package_amount = Math.floor(product.amount / product.per_box);
+        }
+    
         await this.productRepository.save(product);
     }
 
