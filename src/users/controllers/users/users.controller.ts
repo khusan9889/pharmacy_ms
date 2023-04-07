@@ -13,7 +13,7 @@ export class UserController {
   @Get()
   async findAll(): Promise<ResultDto<User[]>> {
     const users = await this.userService.findAll();
-    return new ResultDto(true, 'Successfully retrieved users', users);
+    return new ResultDto(true, 'Successfully retrieved users. Test', users);
   }
 
   @Get(':id')
