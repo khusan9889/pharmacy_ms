@@ -12,7 +12,11 @@ import { RolesModule } from './roles/roles.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { AuthController } from './components/auth/auth.controller';
 import entities from './typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthInterceptor } from './interceptor/auth.interceptor';
+
 
 
 @Module({
@@ -44,7 +48,10 @@ import entities from './typeorm';
     RolesModule,
     AuthModule,
     StatisticsModule,],
-  controllers: [],
-  providers: [],
+  controllers: [AuthController],
+  providers: [{
+    provide: APP_INTERCEPTOR,
+    useClass: AuthInterceptor,
+  }],
 })
 export class AppModule { }

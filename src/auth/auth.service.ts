@@ -1,77 +1,60 @@
 import { Injectable, Res } from '@nestjs/common';
-import { Response } from 'express';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm';
 import { Repository } from 'typeorm';
-import { AuthLoginDto } from './dto/auth-login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import * as cookie from 'cookie';
-import * as cookieParser from 'cookie-parser';
-
+import { UserService } from 'src/users/services/users/users.service';
 
 @Injectable()
 export class AuthService {
-  private tokenBlacklist: { [token: string]: string } = {};
 
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly jwtService: JwtService
-  ) { }
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+        private jwtService: JwtService,
+        private usersService: UserService
 
-  async login({ username, password }: AuthLoginDto, @Res() res: Response) {
-    const hasUser = await this.userRepository.findOne({ where: { username } })
-    if (!hasUser)
-      throw new UnauthorizedException('Invalid username')
-    const isPasswordValid = await bcrypt.compare(password, hasUser.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
-    }
-  
-    const payload = { username };
-    const token = this.jwtService.sign(payload);
-  
-    // Set the access token in a cookie
-    res.cookie('access_token', token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
-    });
-  
-    return { access_token: token, user: hasUser };
-  }
+    ) {}
 
+    async validateUser({ username, password }) {
+        const hasUser = await this.userRepository.findOne({ where: { username } })
+        if (!hasUser)
+            return null
 
-  async logout(user: User, token: string) {
-    console.log('user', user);
-    if (!token.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Invalid token');
-    }
-    const splitToken = token.split('Bearer ')[1];
-    if (!splitToken) {
-      throw new UnauthorizedException('Invalid token');
+        const isPasswordValid = await bcrypt.compare(password, hasUser.password);
+        if (!isPasswordValid) {
+            return null
+        } else return hasUser
     }
 
-    try {
-      const payload = await this.jwtService.decode(splitToken) as { username?: string };
+    async login(user: any) {
+        // console.log(user.user);
+        const payload = {
+            user: {
+                id: user.user.id,
+                username: user.user.username,
+            }
+        };
+        // console.log({payload});
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
 
+    }
 
-      if (!payload || !payload.username) {
-        throw new Error('Invalid token payload');
-      }
-      if (payload.username === user.username) {
-        if (!this.tokenBlacklist[splitToken]) {
-          this.tokenBlacklist[splitToken] = user.username;
+    async register(data) {
+        data.password = await bcrypt.hash(data.password, 10)
+        let response = await this.usersService.create(data);
+        if (response) {
+            const { password, ...result } = response;
+            return result;
         }
-      } else {
-        throw new UnauthorizedException();
-      }
-    } catch (error) {
-      console.error('Error decoding token:', error);
-      throw new UnauthorizedException();
     }
-  }
+
+    decodeToken(token): any {
+        return this.jwtService.decode(token)
+    }
+
 
 }
-

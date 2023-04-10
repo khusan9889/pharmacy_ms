@@ -1,13 +1,15 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { StatisticsService } from 'src/statistics/services/statistics/statistics.service';
 import { ResultDto } from 'dto/result.dto';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 
 @Controller('statistics')
 export class StatisticsController {
   constructor(
     private readonly statisticsService: StatisticsService) { }
-
+  
+  @UseGuards(JwtAuthGuard)
   @Get('common-products')
   async getCommonProductsStats(
     @Query('order') order: 'ASC' | 'DESC' = 'DESC',
@@ -23,6 +25,7 @@ export class StatisticsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('category-stats')
   async getCategorySalesStats(
       @Query('order') order: 'ASC' | 'DESC' = 'DESC',
@@ -37,6 +40,7 @@ export class StatisticsController {
     }   
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':userId')
   async getUserPurchaseStatsByUserId(@Param('userId') userId: string,
     @Query('dateFrom') dateFrom: string,
@@ -54,6 +58,7 @@ export class StatisticsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getUserPurchaseStats(
     @Query('dateFrom') dateFrom: string,

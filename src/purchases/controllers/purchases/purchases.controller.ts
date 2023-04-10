@@ -1,12 +1,14 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { Purchase } from 'src/typeorm';
 import { PurchasesService } from 'src/purchases/services/purchases/purchases.service';
 import { ResultDto } from 'dto/result.dto';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('purchases')
 export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findPurchases(
     @Query('dateFrom') dateFrom: string,
